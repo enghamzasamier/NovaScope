@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>NovaScope · Social Media Intelligence</title>
+  <meta name="description" content="NovaScope turns any DataReportal report into an interactive analytics dashboard with charts, infographics, and exportable data." />
+  <meta name="author" content="Nova Team — Hamza Samier" />
+  <meta property="og:title" content="NovaScope · Social Media Intelligence" />
+  <meta property="og:description" content="Paste a DataReportal URL and get instant visual analytics." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- jsPDF + html2canvas for export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     HEADER / TOP BAR
+═══════════════════════════════════════════════════ -->
+<header class="header" id="appHeader">
+  <div class="header-inner">
+    <button class="header-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+      <i data-lucide="menu"></i>
+    </button>
+
+    <a href="#" class="header-brand" onclick="switchTab('home'); return false;">
+      <span class="brand-name">Nova<span class="brand-accent">Scope</span></span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="header-nav" role="navigation" aria-label="Main navigation">
+      <button class="nav-tab active" data-tab="home" id="navHome">
+        <i data-lucide="home"></i>
+        <span data-i18n="nav_home">Home</span>
+      </button>
+      <button class="nav-tab" data-tab="dashboard" id="navDashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span data-i18n="nav_dashboard">Dashboard</span>
+      </button>
+      <button class="nav-tab" data-tab="charts" id="navCharts">
+        <i data-lucide="bar-chart-2"></i>
+        <span data-i18n="nav_charts">Charts</span>
+      </button>
+      <button class="nav-tab" data-tab="export" id="navExport">
+        <i data-lucide="download"></i>
+        <span data-i18n="nav_export">Export</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Language toggle -->
+      <button class="lang-btn" id="langToggle" aria-label="Switch language">
+        <span class="lang-label" id="langLabel">عربي</span>
+      </button>
+      <!-- Theme toggle -->
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+        <i data-lucide="moon" class="moon-icon"></i>
+        <i data-lucide="sun" class="sun-icon"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile sidebar overlay -->
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<!-- Mobile sidebar -->
+<aside class="mob-sidebar" id="mobSidebar" role="navigation">
+  <div class="mob-sidebar-head">
+    <span class="brand-name">Nova<span class="brand-accent">Scope</span></span>
+    <button class="icon-btn" id="mobSidebarClose" aria-label="Close">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+  <nav class="mob-sidebar-nav">
+    <button class="sidebar-nav-item active" data-tab="home">
+      <i data-lucide="home"></i>
+      <span data-i18n="nav_home">Home</span>
+    </button>
+    <button class="sidebar-nav-item" data-tab="dashboard">
+      <i data-lucide="layout-dashboard"></i>
+      <span data-i18n="nav_dashboard">Dashboard</span>
+    </button>
+    <button class="sidebar-nav-item" data-tab="charts">
+      <i data-lucide="bar-chart-2"></i>
+      <span data-i18n="nav_charts">Charts</span>
+    </button>
+    <button class="sidebar-nav-item" data-tab="export">
+      <i data-lucide="download"></i>
+      <span data-i18n="nav_export">Export</span>
+    </button>
+  </nav>
+
+</aside>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN / TAB PANELS
+═══════════════════════════════════════════════════ -->
+<main class="main-wrap" id="mainWrap">
+
+  <!-- ─── TAB: HOME ─── -->
+  <div class="tab-panel active" id="tab-home">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="dot-live"></span>
+          <span data-i18n="hero_eyebrow">Powered by DataReportal · Open Source</span>
+        </div>
+        <h1 class="hero-h1" data-i18n="hero_title">Turn Digital Reports Into<br>Visual Intelligence</h1>
+        <p class="hero-body" data-i18n="hero_desc">Paste any DataReportal report link and get an instant analytics dashboard — charts, KPIs, platform breakdowns, and exportable data.</p>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat"><span class="hs-val">50+</span><span class="hs-lbl" data-i18n="stat_data">Data Points</span></div>
+        <div class="hs-sep"></div>
+        <div class="hero-stat"><span class="hs-val">7</span><span class="hs-lbl" data-i18n="stat_charts">Chart Types</span></div>
+        <div class="hs-sep"></div>
+        <div class="hero-stat"><span class="hs-val">3</span><span class="hs-lbl" data-i18n="stat_exports">Export Formats</span></div>
+      </div>
+    </section>
+
+    <!-- Analyzer card -->
+    <section class="analyzer-section" id="analyzerSection">
+      <div class="section-label" data-i18n="step_analyze">ANALYZE A REPORT</div>
+      <div class="analyzer-card">
+        <div class="url-row">
+          <div class="url-icon"><i data-lucide="link"></i></div>
+          <input
+            id="reportUrl"
+            type="url"
+            class="url-input"
+            placeholder="https://datareportal.com/reports/digital-2026-egypt"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="DataReportal report URL"
+          />
+          <button class="analyze-btn" id="analyzeBtn" aria-label="Analyze">
+            <i data-lucide="search"></i>
+            <span data-i18n="btn_analyze">Analyze</span>
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div class="url-error hidden" id="analyzerError" role="alert">
+          <i data-lucide="alert-circle"></i>
+          <span id="analyzerErrorMsg">Invalid URL</span>
+        </div>
+
+        <!-- Examples -->
+        <div class="examples-row">
+          <span class="examples-lbl" data-i18n="examples">Examples:</span>
+          <button class="chip" data-url="https://datareportal.com/reports/digital-2026-egypt">Egypt 2026</button>
+          <button class="chip" data-url="https://datareportal.com/reports/digital-2026-saudi-arabia">Saudi Arabia 2026</button>
+          <button class="chip" data-url="https://datareportal.com/reports/digital-2026-global-overview">Global 2026</button>
+          <button class="chip" data-url="https://datareportal.com/reports/digital-2026-uae">UAE 2026</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loader -->
+    <div class="loader-panel hidden" id="loaderPanel">
+      <div class="loader-inner">
+        <div class="loader-rings">
+          <div class="lr lr1"></div>
+          <div class="lr lr2"></div>
+          <div class="lr lr3"></div>
+        </div>
+        <p class="loader-title" data-i18n="loader_title">Fetching Report</p>
+        <div class="loader-steps">
+          <div class="load-step" id="loadStep1"><i data-lucide="circle"></i><span data-i18n="step1">Connecting to DataReportal…</span></div>
+          <div class="load-step" id="loadStep2"><i data-lucide="circle"></i><span data-i18n="step2">Extracting data points…</span></div>
+          <div class="load-step" id="loadStep3"><i data-lucide="circle"></i><span data-i18n="step3">Building visualizations…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works (condensed, 3 columns) -->
+    <section class="how-section">
+      <div class="section-label" data-i18n="how_label">HOW IT WORKS</div>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">01</div>
+          <div class="how-icon"><i data-lucide="link"></i></div>
+          <h3 data-i18n="how1_title">Paste a URL</h3>
+          <p data-i18n="how1_desc">Copy any DataReportal country or global report link.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">02</div>
+          <div class="how-icon"><i data-lucide="cpu"></i></div>
+          <h3 data-i18n="how2_title">Extract</h3>
+          <p data-i18n="how2_desc">NovaScope pulls every statistic, figure, and demographic automatically.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">03</div>
+          <div class="how-icon"><i data-lucide="bar-chart-2"></i></div>
+          <h3 data-i18n="how3_title">Visualize & Export</h3>
+          <p data-i18n="how3_desc">Explore interactive charts and export selected data as PDF, CSV, or text.</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /tab-home -->
+
+  <!-- ─── TAB: DASHBOARD ─── -->
+  <div class="tab-panel" id="tab-dashboard">
+
+    <!-- Report header bar -->
+    <div class="report-header" id="reportHeader">
+      <div class="rh-left">
+        <div class="rh-flag" id="reportFlag"></div>
+        <div>
+          <div class="rh-title" id="reportTitleEl" data-i18n="report_title">Report Dashboard</div>
+          <div class="rh-sub" id="reportSubEl">Source: DataReportal</div>
+        </div>
+      </div>
+      <a class="chip" id="sourceLink" href="#" target="_blank" rel="noopener">
+        <i data-lucide="external-link"></i>
+        <span data-i18n="source">Source</span>
+      </a>
+    </div>
+
+    <!-- KPI grid -->
+    <div class="section-label" data-i18n="kpi_label">KEY METRICS</div>
+    <div class="kpi-grid" id="kpiGrid">
+      <div class="kpi-placeholder" id="kpiPlaceholder">
+        <i data-lucide="bar-chart-2"></i>
+        <p data-i18n="kpi_placeholder">Analyze a report to see metrics</p>
+      </div>
+    </div>
+
+    <!-- Platform list -->
+    <div class="section-label" id="platformSectionLabel" style="display:none" data-i18n="platform_label">PLATFORM BREAKDOWN</div>
+    <div class="platform-list" id="platformList"></div>
+
+    <!-- Highlights -->
+    <div class="section-label" id="highlightSectionLabel" style="display:none" data-i18n="highlights_label">KEY HIGHLIGHTS</div>
+    <div class="highlights-list" id="highlightsList"></div>
+
+    <!-- Next steps strip -->
+    <div class="next-strip hidden" id="dashNextStrip">
+      <button class="next-strip-btn" data-tab="charts">
+        <i data-lucide="bar-chart-2"></i>
+        <span data-i18n="next_charts">Explore Charts</span>
+        <i data-lucide="arrow-right" class="ns-arrow"></i>
+      </button>
+      <button class="next-strip-btn" data-tab="export">
+        <i data-lucide="download"></i>
+        <span data-i18n="next_export">Export Data</span>
+        <i data-lucide="arrow-right" class="ns-arrow"></i>
+      </button>
+    </div>
+
+  </div><!-- /tab-dashboard -->
+
+  <!-- ─── TAB: CHARTS ─── -->
+  <div class="tab-panel" id="tab-charts">
+    <div class="section-label" data-i18n="charts_label">INTERACTIVE CHARTS</div>
+
+    <!-- Chart selector tabs -->
+    <div class="chart-tabs" id="chartTabs">
+      <button class="ct-tab active" data-chart="platformBar" data-i18n="ct_platform">Platforms</button>
+      <button class="ct-tab" data-chart="overviewDonut" data-i18n="ct_overview">Overview</button>
+      <button class="ct-tab" data-chart="penetrationRadar" data-i18n="ct_radar">Radar</button>
+      <button class="ct-tab" data-chart="platformShare" data-i18n="ct_share">Share</button>
+      <button class="ct-tab" data-chart="genderChart" data-i18n="ct_gender">Gender</button>
+      <button class="ct-tab" data-chart="urbanRural" data-i18n="ct_urban">Urban/Rural</button>
+      <button class="ct-tab" data-chart="platformGrowth" data-i18n="ct_growth">Growth</button>
+    </div>
+
+    <!-- Active chart display -->
+    <div class="chart-stage" id="chartStage">
+      <div class="chart-placeholder" id="chartPlaceholder">
+        <i data-lucide="bar-chart-2"></i>
+        <p data-i18n="chart_placeholder">Analyze a report to view charts</p>
+      </div>
+    </div>
+
+    <!-- Chart nav arrows (mobile swipe nav) -->
+    <div class="chart-nav hidden" id="chartNav">
+      <button class="chart-nav-btn" id="chartPrev"><i data-lucide="chevron-left"></i></button>
+      <span class="chart-nav-counter" id="chartCounter">1 / 7</span>
+      <button class="chart-nav-btn" id="chartNext"><i data-lucide="chevron-right"></i></button>
+    </div>
+
+    <!-- Next step strip -->
+    <div class="next-strip hidden" id="chartsNextStrip">
+      <button class="next-strip-btn" data-tab="export">
+        <i data-lucide="download"></i>
+        <span data-i18n="next_export">Export Data</span>
+        <i data-lucide="arrow-right" class="ns-arrow"></i>
+      </button>
+    </div>
+
+  </div><!-- /tab-charts -->
+
+  <!-- ─── TAB: EXPORT ─── -->
+  <div class="tab-panel" id="tab-export">
+    <div class="section-label" data-i18n="export_label">EXPORT DATA</div>
+
+    <div class="export-intro hidden" id="exportIntro">
+      <i data-lucide="download-cloud"></i>
+      <p data-i18n="export_placeholder">Analyze a report first to select data for export.</p>
+    </div>
+
+    <div class="export-ready hidden" id="exportReady">
+      <!-- Format selector -->
+      <div class="export-format-row">
+        <div class="section-label" data-i18n="format_label">FORMAT</div>
+        <div class="format-pills">
+          <button class="format-pill active" data-format="pdf">
+            <i data-lucide="file-text"></i> PDF
+          </button>
+          <button class="format-pill" data-format="csv">
+            <i data-lucide="table-2"></i> CSV
+          </button>
+          <button class="format-pill" data-format="txt">
+            <i data-lucide="align-left"></i> TXT
+          </button>
+        </div>
+      </div>
+
+      <!-- Data selection -->
+      <div class="section-label" data-i18n="select_label">SELECT DATA</div>
+      <div class="export-items" id="exportItems">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Chart selection -->
+      <div class="section-label" data-i18n="select_charts">INCLUDE CHARTS</div>
+      <div class="export-chart-picks" id="exportChartPicks"></div>
+
+      <!-- Action row -->
+      <div class="export-actions">
+        <button class="select-all-btn" id="selectAllBtn">
+          <i data-lucide="check-square"></i>
+          <span data-i18n="select_all">Select All</span>
+        </button>
+        <button class="export-go-btn" id="exportGoBtn">
+          <i data-lucide="download"></i>
+          <span data-i18n="export_go">Export Report</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Show when no data yet -->
+    <div class="export-empty" id="exportEmpty">
+      <i data-lucide="download-cloud"></i>
+      <p data-i18n="export_empty">No report analyzed yet.</p>
+      <button class="chip" onclick="switchTab('home')" data-i18n="go_analyze">Go to Analyzer</button>
+    </div>
+
+  </div><!-- /tab-export -->
+
+</main><!-- /main-wrap -->
+
+<!-- ═══════════════════════════════════════════════
+     BOTTOM NAV BAR (mobile)
+═══════════════════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+  <button class="bn-item active" data-tab="home" id="bnHome">
+    <i data-lucide="home"></i>
+    <span data-i18n="nav_home">Home</span>
+  </button>
+  <button class="bn-item" data-tab="dashboard" id="bnDashboard">
+    <i data-lucide="layout-dashboard"></i>
+    <span data-i18n="nav_dashboard">Dashboard</span>
+  </button>
+  <button class="bn-item" data-tab="charts" id="bnCharts">
+    <i data-lucide="bar-chart-2"></i>
+    <span data-i18n="nav_charts">Charts</span>
+  </button>
+  <button class="bn-item" data-tab="export" id="bnExport">
+    <i data-lucide="download"></i>
+    <span data-i18n="nav_export">Export</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<footer class="footer" id="appFooter">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <img src="css/NOVA Mono logo.png" alt="Nova" class="footer-nova-logo" />
+      <div class="footer-info">
+        <div class="footer-tagline" data-i18n="footer_tagline">Social Media Intelligence · Open Source · Free</div>
+      </div>
+    </div>
+
+    <div class="footer-mid">
+      <div class="footer-team">
+        <div class="ft-label" data-i18n="made_by">Made by Nova Team</div>
+        <div class="team-row">
+          <a href="https://wa.me/201227768855" target="_blank" rel="noopener" class="team-contact-card" id="contact-hamza">
+            <div class="tc-avatar">HS</div>
+            <div>
+              <div class="tc-name">Hamza Samier</div>
+              <div class="tc-num">+20 122 776 8855</div>
+            </div>
+            <i data-lucide="message-circle"></i>
+          </a>
+          <a href="https://wa.me/201065934228" target="_blank" rel="noopener" class="team-contact-card" id="contact-khaled">
+            <div class="tc-avatar">KH</div>
+            <div>
+              <div class="tc-name">Khaled Hazem</div>
+              <div class="tc-num">+20 106 593 4228</div>
+            </div>
+            <i data-lucide="message-circle"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <a href="https://datareportal.com" target="_blank" rel="noopener">DataReportal</a>
+        <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.chartjs.org" target="_blank" rel="noopener">Chart.js</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Nova Team · NovaScope · MIT License</span>
+      <span class="footer-version">v2.0</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/utils.js"></script>
+<script src="js/scraper.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
